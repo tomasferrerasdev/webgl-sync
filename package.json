@@ -1,0 +1,17 @@
+{
+  "name": "xmcp-monorepo",
+  "description": "From the basement.",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev"
+  },
+  "devDependencies": {
+    "eslint-config-custom": "workspace:",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3"
+  },
+  "packageManager": "pnpm@10.8.1",
+  "engines": {
+    "node": "20.x"
+  }
+}
