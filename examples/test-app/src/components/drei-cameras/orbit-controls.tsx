@@ -10,7 +10,7 @@ import { Camera, Event, OrthographicCamera, PerspectiveCamera } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 export type NonFunctionKeys<T> = {
-  [K in keyof T]-?: T[K] extends Function ? never : K;
+  [K in keyof T]-?: T[K] extends (...args: unknown[]) => unknown ? never : K;
 }[keyof T];
 export type Overwrite<T, O> = Omit<T, NonFunctionKeys<O>> & O;
 
@@ -67,7 +67,6 @@ export const OrbitControls: ForwardRefComponent<
     const events = useThree(
       (state) => state.events
     ) as EventManager<HTMLElement>;
-    const setEvents = useThree((state) => state.setEvents);
     const set = useThree((state) => state.set);
     const get = useThree((state) => state.get);
     const performance = useThree((state) => state.performance);
@@ -93,7 +92,7 @@ export const OrbitControls: ForwardRefComponent<
 
       controls.connect(explDomElement);
       return () => void controls.dispose();
-    }, [keyEvents, explDomElement, regress, controls, invalidate]);
+    }, [keyEvents, explDomElement, controls]);
 
     React.useEffect(() => {
       const callback = (e: OrbitControlsChangeEvent) => {
@@ -119,16 +118,16 @@ export const OrbitControls: ForwardRefComponent<
         controls.removeEventListener("end", onEndCb);
         controls.removeEventListener("change", callback);
       };
-    }, [onChange, onStart, onEnd, controls, invalidate, setEvents]);
+    }, [onChange, onStart, onEnd, controls, invalidate, performance, regress]);
 
     React.useEffect(() => {
       if (makeDefault) {
         const old = get().controls;
-        // @ts-ignore https://github.com/three-types/three-ts-types/pull/1398
+
         set({ controls });
         return () => set({ controls: old });
       }
-    }, [makeDefault, controls]);
+    }, [makeDefault, controls, get, set]);
 
     return (
       <primitive
@@ -140,3 +139,5 @@ export const OrbitControls: ForwardRefComponent<
     );
   }
 );
+
+OrbitControls.displayName = "OrbitControls";

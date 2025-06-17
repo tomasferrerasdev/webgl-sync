@@ -1,5 +1,5 @@
 import { useThree, useFrame } from "@react-three/fiber";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import * as THREE from "three";
 import { Container, Root } from "@react-three/uikit";
 import { PerspectiveCamera, OrbitControls } from "./drei-cameras";
@@ -26,17 +26,17 @@ const Plane = () => {
   const { camera, size } = useThree();
   const meshRef = useRef<THREE.Mesh>(null);
 
-  const updatePlaneDimensions = () => {
+  const updatePlaneDimensions = useCallback(() => {
     if (!meshRef.current || !camera) return;
     const { width, height } = calculatePlaneDimensions(camera, size);
     meshRef.current.geometry = new THREE.PlaneGeometry(width, height);
-  };
+  }, [camera, size]);
 
   useEffect(() => {
     updatePlaneDimensions();
     window.addEventListener("resize", updatePlaneDimensions);
     return () => window.removeEventListener("resize", updatePlaneDimensions);
-  }, [camera, size]);
+  }, [updatePlaneDimensions]);
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>

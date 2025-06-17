@@ -4,7 +4,10 @@ import { PerspectiveCamera as PerspectiveCameraImpl } from "three";
 import { ThreeElements, useFrame, useThree } from "@react-three/fiber";
 import { useFBO } from "./fbo";
 
-const isFunction = (node: any): node is Function => typeof node === "function";
+type ChildrenFunction = (texture: THREE.Texture) => React.ReactNode;
+
+const isFunction = (node: unknown): node is ChildrenFunction =>
+  typeof node === "function";
 
 export type PerspectiveCameraProps = Omit<
   ThreeElements["perspectiveCamera"],
@@ -15,7 +18,7 @@ export type PerspectiveCameraProps = Omit<
   /** Making it manual will stop responsiveness and you have to calculate aspect ratio yourself. */
   manual?: boolean;
   /** The contents will either follow the camera, or be hidden when filming if you pass a function */
-  children?: React.ReactNode | ((texture: THREE.Texture) => React.ReactNode);
+  children?: React.ReactNode | ChildrenFunction;
   /** Number of frames to render, Infinity */
   frames?: number;
   /** Resolution of the FBO, 256 */
@@ -51,11 +54,11 @@ export const PerspectiveCamera = React.forwardRef<
       if (!props.manual) {
         cameraRef.current.aspect = size.width / size.height;
       }
-    }, [size, props]);
+    }, [size, props.manual]);
 
     React.useLayoutEffect(() => {
       cameraRef.current.updateProjectionMatrix();
-    });
+    }, [cameraRef.current]);
 
     let count = 0;
     let oldEnvMap: THREE.Color | THREE.Texture | null = null;
@@ -80,17 +83,21 @@ export const PerspectiveCamera = React.forwardRef<
         set(() => ({ camera: cameraRef.current! }));
         return () => set(() => ({ camera: oldCam }));
       }
-      // The camera should not be part of the dependency list because this components camera is a stable reference
-      // that must exchange the default, and clean up after itself on unmount.
-    }, [cameraRef, makeDefault, set]);
+    }, [makeDefault, set, camera]);
 
     return (
       <>
         <perspectiveCamera ref={cameraRef} {...props}>
           {!functional && children}
         </perspectiveCamera>
-        <group ref={groupRef}>{functional && children(fbo.texture)}</group>
+        <group ref={groupRef}>
+          {functional &&
+            typeof children === "function" &&
+            children(fbo.texture)}
+        </group>
       </>
     );
   }
 );
+
+PerspectiveCamera.displayName = "PerspectiveCamera";

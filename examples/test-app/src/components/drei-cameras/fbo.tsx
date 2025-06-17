@@ -1,27 +1,27 @@
-import * as React from 'react'
-import * as THREE from 'three'
-import { useThree } from '@react-three/fiber'
+import * as React from "react";
+import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
 
 type FBOSettings = {
   /** Defines the count of MSAA samples. Can only be used with WebGL 2. Default: 0 */
-  samples?: number
+  samples?: number;
   /** If set, the scene depth will be rendered into buffer.depthTexture. Default: false */
-  depth?: boolean
+  depth?: boolean;
 
   // WebGLRenderTargetOptions => RenderTargetOptions
-  wrapS?: THREE.Wrapping | undefined
-  wrapT?: THREE.Wrapping | undefined
-  magFilter?: THREE.MagnificationTextureFilter | undefined
-  minFilter?: THREE.MinificationTextureFilter | undefined
-  format?: THREE.PixelFormat | undefined
-  type?: THREE.TextureDataType | undefined
-  anisotropy?: number | undefined
-  depthBuffer?: boolean | undefined
-  stencilBuffer?: boolean | undefined
-  generateMipmaps?: boolean | undefined
-  depthTexture?: THREE.DepthTexture | undefined
-  colorSpace?: THREE.ColorSpace | undefined
-}
+  wrapS?: THREE.Wrapping | undefined;
+  wrapT?: THREE.Wrapping | undefined;
+  magFilter?: THREE.MagnificationTextureFilter | undefined;
+  minFilter?: THREE.MinificationTextureFilter | undefined;
+  format?: THREE.PixelFormat | undefined;
+  type?: THREE.TextureDataType | undefined;
+  anisotropy?: number | undefined;
+  depthBuffer?: boolean | undefined;
+  stencilBuffer?: boolean | undefined;
+  generateMipmaps?: boolean | undefined;
+  depthTexture?: THREE.DepthTexture | undefined;
+  colorSpace?: THREE.ColorSpace | undefined;
+};
 
 // 👇 uncomment when TS version supports function overloads
 // export function useFBO(settings?: FBOSettings)
@@ -33,12 +33,14 @@ export function useFBO(
   /**Settings */
   settings?: FBOSettings
 ): THREE.WebGLRenderTarget {
-  const size = useThree((state) => state.size)
-  const viewport = useThree((state) => state.viewport)
-  const _width = typeof width === 'number' ? width : size.width * viewport.dpr
-  const _height = typeof height === 'number' ? height : size.height * viewport.dpr
-  const _settings = (typeof width === 'number' ? settings : (width as FBOSettings)) || {}
-  const { samples = 0, depth, ...targetSettings } = _settings
+  const size = useThree((state) => state.size);
+  const viewport = useThree((state) => state.viewport);
+  const _width = typeof width === "number" ? width : size.width * viewport.dpr;
+  const _height =
+    typeof height === "number" ? height : size.height * viewport.dpr;
+  const _settings =
+    (typeof width === "number" ? settings : (width as FBOSettings)) || {};
+  const { samples = 0, depth, ...targetSettings } = _settings;
 
   const target = React.useMemo(() => {
     const target = new THREE.WebGLRenderTarget(_width, _height, {
@@ -46,26 +48,30 @@ export function useFBO(
       magFilter: THREE.LinearFilter,
       type: THREE.HalfFloatType,
       ...targetSettings,
-    })
+    });
 
     if (depth) {
-      target.depthTexture = new THREE.DepthTexture(_width, _height, THREE.FloatType)
+      target.depthTexture = new THREE.DepthTexture(
+        _width,
+        _height,
+        THREE.FloatType
+      );
     }
 
-    target.samples = samples
-    return target
-  }, [])
+    target.samples = samples;
+    return target;
+  }, [_width, _height, depth, samples, targetSettings]);
 
   React.useLayoutEffect(() => {
-    target.setSize(_width, _height)
-    if (samples) target.samples = samples
-  }, [samples, target, _width, _height])
+    target.setSize(_width, _height);
+    if (samples) target.samples = samples;
+  }, [samples, target, _width, _height]);
 
   React.useEffect(() => {
-    return () => target.dispose()
-  }, [])
+    return () => target.dispose();
+  }, [target]);
 
-  return target
+  return target;
 }
 
 export const Fbo = ({
@@ -74,11 +80,11 @@ export const Fbo = ({
   height,
   ...settings
 }: {
-  children?: (target: ReturnType<typeof useFBO>) => React.ReactNode
-  width: Parameters<typeof useFBO>[0]
-  height: Parameters<typeof useFBO>[1]
+  children?: (target: ReturnType<typeof useFBO>) => React.ReactNode;
+  width: Parameters<typeof useFBO>[0];
+  height: Parameters<typeof useFBO>[1];
 } & FBOSettings) => {
-  const target = useFBO(width, height, settings)
+  const target = useFBO(width, height, settings);
 
-  return <>{children?.(target)}</>
-}
+  return <>{children?.(target)}</>;
+};
