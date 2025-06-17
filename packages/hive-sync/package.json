@@ -1,0 +1,50 @@
+{
+  "name": "hive-sync",
+  "description": "Sync or die 🐝",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack --watch",
+    "build:dev": "cross-env NODE_ENV=development webpack",
+    "build:prod": "cross-env NODE_ENV=production webpack",
+    "build": "pnpm run build:prod",
+    "prepare": "pnpm run build:prod"
+  },
+  "peerDependencies": {
+    "@react-three/fiber": "^9.1.2",
+    "@react-three/uikit": "^0.8.19",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.177.0",
+    "three-stdlib": "^2.36.0"
+  },
+  "dependencies": {
+    "tunnel-rat": "^0.1.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.12.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "swc-loader": "^0.2.6",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "@types/three": "^0.177.0",
+    "css-loader": "^5.2.0"
+  }
+}

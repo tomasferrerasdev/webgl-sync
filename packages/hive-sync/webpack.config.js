@@ -45,11 +45,23 @@ export default {
               parser: {
                 syntax: "typescript",
                 tsx: true,
+                decorators: true,
+              },
+              transform: {
+                react: {
+                  runtime: "automatic",
+                  development: !isProduction,
+                  refresh: !isProduction,
+                },
               },
               target: "es2020",
             },
           },
         },
+      },
+      {
+        test: /\.css$/,
+        use: ["css-loader"],
       },
     ],
   },
