@@ -27,6 +27,12 @@ export default {
   experiments: {
     outputModule: true,
   },
+  externals: {
+    react: "react",
+    "react-dom": "react-dom",
+    three: "three",
+    "@react-three/fiber": "@react-three/fiber",
+  },
   optimization: {
     minimize: isProduction,
     usedExports: true,
@@ -45,11 +51,23 @@ export default {
               parser: {
                 syntax: "typescript",
                 tsx: true,
+                decorators: true,
+              },
+              transform: {
+                react: {
+                  runtime: "automatic",
+                  development: !isProduction,
+                  refresh: !isProduction,
+                },
               },
               target: "es2020",
             },
           },
         },
+      },
+      {
+        test: /\.css$/,
+        use: ["css-loader"],
       },
     ],
   },
