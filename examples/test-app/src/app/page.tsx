@@ -15,7 +15,7 @@ export default function Home() {
     >
       <nav className="mb-20">
         <Link href="/" className="text-2xl">
-          🐝 Hive
+          🐝 Hive - sync or die
         </Link>
       </nav>
       <Demo />

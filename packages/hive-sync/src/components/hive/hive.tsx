@@ -281,7 +281,6 @@ export const Hive = ({
           overflow: "hidden",
           willChange: "transform",
           pointerEvents: "none",
-          backgroundColor: "rgb(239, 68, 68)",
           height: "calc(100lvh * var(--height-offset))",
           width: "100%",
         } as React.CSSProperties
