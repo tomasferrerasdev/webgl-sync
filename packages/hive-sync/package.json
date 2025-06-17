@@ -1,6 +1,7 @@
 {
   "name": "hive-sync",
   "description": "Sync or die 🐝",
+  "author": "Basement.studio",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/index.js",
