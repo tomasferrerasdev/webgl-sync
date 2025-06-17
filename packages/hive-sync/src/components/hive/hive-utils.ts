@@ -11,10 +11,14 @@ export const col = new THREE.Color();
 export const tracked = tunnel();
 export const PADDING = 0.25;
 
-export const computeContainerPosition = (
-  canvasSize: CanvasSize,
-  trackRect: DOMRect
-) => {
+const getWindowMetrics = () => {
+  const scrollOffset = window.scrollY - window.innerHeight * PADDING;
+  const viewportHeight = window.innerHeight * (1 + PADDING * 2);
+  return { scrollOffset, viewportHeight };
+};
+
+const createScrollCalculator = (canvasSize: CanvasSize, trackRect: DOMRect) => {
+  const { top: canvasTop, width: canvasWidth } = canvasSize;
   const {
     right,
     top,
@@ -23,26 +27,35 @@ export const computeContainerPosition = (
     width,
     height,
   } = trackRect;
-  // scroll offset w/ padding
-  const scrollOffset = window.scrollY - window.innerHeight * PADDING;
-  const viewportHeight = window.innerHeight * (1 + PADDING * 2);
 
-  const canvasBottom = canvasSize.top + canvasSize.height;
+  const canvasBottom = canvasTop + canvasSize.height;
   const bottom = canvasBottom - trackBottom;
   const left = trackLeft - canvasSize.left;
 
-  // calculate element position relative to the scroll
-  const elementTop = top + window.scrollY;
-  const elementBottom = trackBottom + window.scrollY;
+  return () => {
+    const { scrollOffset, viewportHeight } = getWindowMetrics();
+    const elementTop = top + window.scrollY;
+    const elementBottom = trackBottom + window.scrollY;
 
-  // check if element is within the extended viewport
-  const isOffscreen =
-    elementBottom < scrollOffset - viewportHeight * 0.5 ||
-    elementTop > scrollOffset + viewportHeight * 1.5 ||
-    right < 0 ||
-    trackRect.left > canvasSize.width;
+    const isOffscreen =
+      elementBottom < scrollOffset - viewportHeight * 0.5 ||
+      elementTop > scrollOffset + viewportHeight * 1.5 ||
+      right < 0 ||
+      trackLeft > canvasWidth;
 
-  return { position: { width, height, left, top, bottom, right }, isOffscreen };
+    return {
+      position: { width, height, left, top, bottom, right },
+      isOffscreen,
+    };
+  };
+};
+
+export const computeContainerPosition = (
+  canvasSize: CanvasSize,
+  trackRect: DOMRect
+) => {
+  console.log("rerender");
+  return createScrollCalculator(canvasSize, trackRect)();
 };
 
 export const prepareSkissor = (
