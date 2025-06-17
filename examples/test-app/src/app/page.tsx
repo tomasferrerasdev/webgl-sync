@@ -1,14 +1,25 @@
 "use client";
 
-import { Greeting } from "hive-sync";
+import { Demo } from "@/components/demo";
+import { Hive } from "hive-sync";
+import Link from "next/link";
+import { useRef } from "react";
 
 export default function Home() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Greeting
-        name="Developer"
-        message="Welcome to your test app using Hive Sync!"
-      />
+    <main
+      className="h-full w-full relative p-6 pb-[500px] contain-paint"
+      ref={containerRef}
+    >
+      <nav className="mb-20">
+        <Link href="/" className="text-2xl">
+          🐝 Hive
+        </Link>
+      </nav>
+      <Demo />
+      <Hive containerRef={containerRef} />
     </main>
   );
 }

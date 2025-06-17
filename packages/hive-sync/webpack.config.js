@@ -27,6 +27,12 @@ export default {
   experiments: {
     outputModule: true,
   },
+  externals: {
+    react: "react",
+    "react-dom": "react-dom",
+    three: "three",
+    "@react-three/fiber": "@react-three/fiber",
+  },
   optimization: {
     minimize: isProduction,
     usedExports: true,
